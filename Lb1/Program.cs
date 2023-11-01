@@ -153,6 +153,7 @@ namespace Lab1Sem2
             Year = 0;
         }
 
+        //Констуктор для изданной книги
         public Book(string author, string name, string publishing, string iSBN, int year, BookType type, List<Chapters> content)
         {
             Author = author;
@@ -164,6 +165,8 @@ namespace Lab1Sem2
             Content = new List<Chapters>(content);
         }
 
+
+        //Конструктор для неизданнной книги
         public Book(string author, string name, BookType type, List<Chapters> content)
         {
             Author = author;
@@ -175,6 +178,7 @@ namespace Lab1Sem2
             Content = new List<Chapters>(content);
         }
 
+        //Метод для получения кол-ва всех страниц 
         public int getPAgesTotal()
         {
             int total_pages = 0;
@@ -183,6 +187,7 @@ namespace Lab1Sem2
             return total_pages;
         }
 
+        //Метод для установки информации о главах
         public void setContent()
         {
             string s;
@@ -239,6 +244,7 @@ namespace Lab1Sem2
 
         }
 
+        //Метод для получения среднего кол-ва страниц
         public double PerChapter()
         {
             int total_pages = getPAgesTotal();
@@ -247,6 +253,7 @@ namespace Lab1Sem2
             else return 0;
         }
 
+        //Метод для получения информации об издании
         public short Publish(string pubName, int pubYear, string newISBN)
         {
             if (!string.IsNullOrEmpty(publishing))
@@ -267,7 +274,6 @@ namespace Lab1Sem2
             }
             return 0;
         }
-
 
         public void EnterInfo()
         {
@@ -403,8 +409,9 @@ namespace Lab1Sem2
                 Console.WriteLine($"Среднее количество страниц в главе: {PerChapter()}");
                 Console.WriteLine($"Тип: {ToString(Type)}");
             }
-        }
 
+        }
+        //Метод для ввода информации об издании
         public void EnterPublishing()
         {
             bool f = true;
@@ -456,10 +463,14 @@ namespace Lab1Sem2
             }
 
         }
+
+        //Метод для удаления выбранной главы 
         public void del(int k)
         {
             Content.RemoveAt(k);
         }
+
+        //Мметод для редактирования выбранной главы 
         public void edit(int index, string newName, int newPages)
         {
             Chapters ch;
@@ -468,6 +479,8 @@ namespace Lab1Sem2
             ch.Pages = newPages;
             Content[index] = ch;
         }
+
+        //Метод для добавления новой главы
         public void newElement(string newName, int newPages)
         {
             Chapters ch;
@@ -476,6 +489,7 @@ namespace Lab1Sem2
             ch.Pages = newPages;
             Content.Add(ch);
         }
+
         public void printVec()
         {
             foreach (Chapters i in Content)
