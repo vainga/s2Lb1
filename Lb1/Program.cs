@@ -3,48 +3,45 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
-//Модульные тесты 
-
-namespace Lb1
+namespace Lab1Sem2
 {
     public class Chapters
     {
         private string name;
+        public string Name
+        {
+            get { return name; }
+            set {
+                if (string.IsNullOrEmpty(value))
+                    throw new ArgumentNullException("Название главы не может быть пустым!");
+                name = value;
+            }
+        }
         private int pages;
+        public int Pages
+        {
+            get {return pages;}
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException("Количество страниц не может быть отрицательным!");
+                pages = value;
+            }
+        }
         public Chapters()
         {
-            this.name = "";
-            this.pages = 0;
+            name = "";
+            pages = 0;
         }
         public Chapters(string name, int pages)
         {
             this.name = name;
             this.pages = pages;
         }
-        public int getPages()
-        {
-            return pages;
-        }
-        public string getName()
-        {
-            return name;
-        }
-        public void setName(string newName)
-        {
-            if (string.IsNullOrEmpty(newName))
-                throw new ArgumentNullException("Название главы не может быть пустым!");
-            this.name = newName;
-        }
-        public void setPages(int newPages)
-        {
-            if (newPages < 0) throw new ArgumentOutOfRangeException("Количество страниц не может быть отрицательным!");
-            this.pages = newPages;
-        }
     }
 
     public class Book
     {
-        public enum BookType 
+        public enum BookType
         {
             UNDEFINED,
             HARD_COVER,
@@ -53,12 +50,97 @@ namespace Lb1
         }
 
         private string Author;
+        public string author
+        {
+            get { return Author; }
+            set {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    Author = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Имя автора не может быть пустым!");
+                }
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (char.IsDigit(value[i]))
+                    {
+                        throw new ArgumentException("Имя автора не может состоять из цифр!");
+                    }
+                }
+            }
+        }
         private string Name;
+        public string name
+        {
+            get { return Name; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                    Name = value;
+                else
+                    throw new Exception("Имя книги не может быть пустым!");
+            }
+        }
         private string ISBN;
+        public string isbn
+        {
+            get { return ISBN; }
+            set
+            {
+                if (value.Length != 13)
+                    throw new ArgumentException("Некоректный ISBN!");
+                foreach (char i in value) if (!char.IsDigit(i))
+                        throw new ArgumentException("Некорректный ISBN!");
+                ISBN = value;
+            }
+        }
         private string Publishing;
+        public string publishing
+        {
+            get { return Publishing; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    throw new ArgumentNullException("Название издательства не может быть пустым!");
+                Publishing = value;
+            }
+        }
         private int Year;
+        public int year
+        {
+            get { return Year; }
+            set
+            {
+                if (value < 1563)
+                    throw new ArgumentOutOfRangeException("Некорректное значение года издания!");
+                Year = value;
+            }
+        }
         private BookType Type;
+        public BookType type
+        {
+            get { return Type; }
+            set
+            {
+                Type = value;
+            }
+        }
         private List<Chapters> Content;
+        public List<Chapters> content
+        {
+            get
+            {
+                return Content;
+            }
+
+            set
+            {
+                Content = value.ToList();
+            }
+        }
 
         public Book()
         {
@@ -86,105 +168,19 @@ namespace Lb1
         {
             Author = author;
             Name = name;
+            ISBN = "";
+            Publishing = "";
+            Year = 0;
             Type = type;
             Content = new List<Chapters>(content);
-        }
-
-        public string getAuthor()
-        {
-            return Author;
-        }
-
-        public string getName()
-        {
-            return Name;
-        }
-
-        public string getISBN()
-        {
-            return ISBN;
-        }
-
-        public int getYear()
-        {
-            return Year;
-        }
-
-        public string getPubHouse()
-        {
-            return Publishing;
-        }
-
-        public List<Chapters> getContent()
-        {
-            return Content;
-        }
-
-
-        public BookType getType()
-        {
-            return Type;
         }
 
         public int getPAgesTotal()
         {
             int total_pages = 0;
             foreach (Chapters i in Content)
-                total_pages += i.getPages();
+                total_pages += i.Pages;
             return total_pages;
-        }
-
-        public void setPubHouse(string newPubHouse) 
-        {
-            if (string.IsNullOrEmpty(newPubHouse))
-                throw new ArgumentNullException("Название издательства не может быть пустым!");
-            Publishing = newPubHouse;
-        }
-
-        public void setYear(int newYear) 
-        {
-            if (newYear < 1563)
-                throw new ArgumentOutOfRangeException("Некорректное значение года издания!");
-            Year = newYear;
-        }
-
-        public void setISBT(string newISBN)
-        {
-            if (newISBN.Length != 13)
-                throw new ArgumentException("Некоректный ISBN!");
-            foreach (char i in newISBN) if (!char.IsDigit(i))
-                    throw new ArgumentException("Некорректный ISBN!");
-            ISBN = newISBN;
-        }
-      
-
-        public void SetAuthor(string newAuthor)
-        {
-            if (!string.IsNullOrEmpty(newAuthor))
-            {
-                this.Author = newAuthor;
-            }
-            else
-            {
-                throw new ArgumentException("Имя автора не может быть пустым!");
-            }
-
-            for (int i = 0; i < newAuthor.Length; i++)
-            {
-                if (char.IsDigit(newAuthor[i]))
-                {
-                    throw new ArgumentException("Имя автора не может состоять из цифр!");
-                }
-            }
-        }
-
-       
-        public void setName(string newName)
-        {
-            if(!string.IsNullOrEmpty(newName))
-                    this.Name = newName;
-            else
-                throw new Exception("Имя книги не может быть пустым!");
         }
 
         public void setContent()
@@ -194,62 +190,54 @@ namespace Lb1
             string name;
             int pages;
             Chapters ch;
-            ch = new Chapters();
 
-            Console.Write("Введите количество глав: "); 
+            Console.Write("Введите количество глав: ");
             N = short.Parse(Console.ReadLine());
-            
-            if(N<0)
+
+            if (N < 0)
             {
                 throw new Exception("Количество глав не может быть отрицательным");
             }
 
-            for(int i = 0; i < N; i++)
+            for (int i = 0; i < N; i++)
             {
                 try
                 {
+                    ch = new Chapters();
                     Console.Write("Введите название главы: ");
                     name = Console.ReadLine();
-                    foreach (Chapters c in this.Content)
+                    foreach (Chapters c in Content)
                     {
-                        if (c.getName() == name)
+                        if (c.Name == name)
                         {
                             throw new Exception("Названия глав не могут повторяться!");
                         }
                     }
-                      
-                    ch.setName(name);
+                    //ch
+                    ch.Name = name;
 
                     Console.WriteLine("Введите количество страниц в главе: ");
                     pages = int.Parse(Console.ReadLine());
 
+                    if (pages <= 0 || pages > 65535)
+                        throw new Exception("Некорректное количество страниц!");
+
                     if (Content.Count != 0 && pages == 0)
                         throw new Exception("Количество страниц не может быть меньше количества глав!");
 
-                    ch.setPages(pages);
+                    ch.Pages = pages;
                     Content.Add(ch);
                 }
 
-                catch(Exception err)
+                catch (Exception err)
                 {
                     Console.WriteLine(err.Message);
                     i--;
                     continue;
-                }  
+                }
             }
 
         }
-
-        public void setContent(List<Chapters> content)
-        {
-            Content = content.ToList();
-        }
-
-        public void setType(BookType newType) 
-        {
-            Type = newType;
-        }
-
 
         public double PerChapter()
         {
@@ -261,18 +249,18 @@ namespace Lb1
 
         public short Publish(string pubName, int pubYear, string newISBN)
         {
-            if(!string.IsNullOrEmpty(getPubHouse()))
+            if (!string.IsNullOrEmpty(publishing))
             {
                 Console.WriteLine("Книга уже была издана!");
                 return 0;
             }
             try
             {
-                setPubHouse(pubName);
-                setISBT(newISBN);
-                setYear(pubYear);
+                publishing = pubName;
+                isbn = newISBN;
+                year = pubYear;
             }
-            catch (Exception err) 
+            catch (Exception err)
             {
                 Console.WriteLine(err.Message);
                 return -1;
@@ -292,22 +280,22 @@ namespace Lb1
             string nN;
             int nP;
 
-            if(!string.IsNullOrEmpty(getAuthor()))
+            if (!string.IsNullOrEmpty(this.author))
             {
                 Console.WriteLine("Данные уже были введены!");
                 return;
             }
 
-            while(f)
+            while (f)
             {
                 try
                 {
                     Console.WriteLine("Введите автора:");
                     author = Console.ReadLine();
-                    SetAuthor(author);
+                    this.author = author;
                     Console.WriteLine("Введите название:");
                     name = Console.ReadLine();
-                    setName(name);
+                    this.name = name;
                     Console.WriteLine("Выберите тип книги: \n1)Твердая обложка\n2)Мягкая обложка\n3)Электронная\nВыбор: ");
                     choice = char.Parse(Console.ReadLine());
                     if (choice < '1' || choice > '3')
@@ -315,13 +303,13 @@ namespace Lb1
                     switch (choice)
                     {
                         case '1':
-                            setType(BookType.HARD_COVER);
+                            type = BookType.HARD_COVER;
                             break;
                         case '2':
-                            setType(BookType.SOFT_COVER);
+                            type = BookType.SOFT_COVER;
                             break;
                         case '3':
-                            setType(BookType.EBOOK);
+                            type = BookType.EBOOK;
                             break;
                     }
                     setContent();
@@ -372,7 +360,7 @@ namespace Lb1
                     else throw new Exception("Некорректное значение!");
                     f = false;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                     f = true;
@@ -396,9 +384,9 @@ namespace Lb1
                 Console.WriteLine($"Количество глав: {Content.Count}");
                 Console.WriteLine($"Список глав:");
                 foreach (Chapters i in Content)
-                    Console.WriteLine($"{i.getName()}: {i.getPages()} страниц");
+                    Console.WriteLine($"{i.Name}: {i.Pages} страниц");
                 Console.WriteLine($"Количество страниц: {getPAgesTotal()}");
-                Console.WriteLine($"Среднеее количество страниц в главе: {PerChapter()}");
+                Console.WriteLine($"Среднее количество страниц в главе: {PerChapter()}");
                 Console.WriteLine($"Год издания: {Year}");
                 Console.WriteLine($"Тип: {ToString(Type)}");
             }
@@ -410,9 +398,9 @@ namespace Lb1
                 Console.WriteLine($"Количество глав: {Content.Count}");
                 Console.WriteLine($"Список глав:");
                 foreach (Chapters i in Content)
-                    Console.WriteLine($"{i.getName()}: {i.getPages()} страниц");
+                    Console.WriteLine($"{i.Name}: {i.Pages} страниц");
                 Console.WriteLine($"Количество страниц: {getPAgesTotal()}");
-                Console.WriteLine($"Среднеее количество страниц в главе: {PerChapter()}");
+                Console.WriteLine($"Среднее количество страниц в главе: {PerChapter()}");
                 Console.WriteLine($"Тип: {ToString(Type)}");
             }
         }
@@ -421,12 +409,12 @@ namespace Lb1
         {
             bool f = true;
             int em = 0;
-            if (!string.IsNullOrEmpty(getPubHouse()))
+            if (!string.IsNullOrEmpty(publishing))
             {
                 Console.WriteLine("Книга уже была издана!");
                 return;
             }
-            while(f)
+            while (f)
             {
                 try
                 {
@@ -445,6 +433,9 @@ namespace Lb1
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    publishing = "";
+                    year = 0;
+                    isbn = "";
                     f = true;
                 }
             }
@@ -473,37 +464,52 @@ namespace Lb1
         {
             Chapters ch;
             ch = new Chapters();
-            ch.setName(newName);
-            ch.setPages(newPages);
-            Content[index]  = ch;
+            ch.Name = newName;
+            ch.Pages = newPages;
+            Content[index] = ch;
         }
         public void newElement(string newName, int newPages)
         {
             Chapters ch;
-            ch =new Chapters();
-            ch.setName(newName);
-            ch.setPages(newPages);
+            ch = new Chapters();
+            ch.Name = newName;
+            ch.Pages = newPages;
             Content.Add(ch);
         }
         public void printVec()
         {
-            foreach(Chapters i in Content)
+            foreach (Chapters i in Content)
             {
-                Console.WriteLine($"{i.getName()}: {i.getPages()} страниц;");
+                Console.WriteLine($"{i.Name}: {i.Pages} страниц;");
             }
         }
-    }   
+    }
 
 
     class Program
     {
         static void Main(string[] args)
         {
-            Book b4 = new Book();
-            b4.EnterInfo();
-            Console.WriteLine();
-            Console.WriteLine();
-            b4.PrintInfo();
+            //Book b4 = new Book();
+            //b4.EnterInfo();
+            List<Chapters> chapters = new List<Chapters>();
+            Chapters ch1 = new Chapters("Начало 1", 50);
+            Chapters ch2 = new Chapters("Середина 2", 150);
+            Chapters ch3 = new Chapters("Конец 3", 70);
+            chapters.Add(ch1);
+            chapters.Add(ch2);
+            chapters.Add(ch3);
+            Book Testbook = new Book("Иванов Иван", "Моя первая книга", Book.BookType.EBOOK, chapters);
+            Testbook.PrintInfo();
+            Console.WriteLine("///////////////////////////////////////////////////////////////////");
+            Testbook.Publish("ACT", 2010, "9785999999999");
+            Testbook.PrintInfo();
+            Console.WriteLine("///////////////////////////////////////////////////////////////////");
+            Testbook.del(2);
+            Testbook.edit(1, "Новая середина", 100);
+            Testbook.newElement("Конец 3", 50);
+            Testbook.PrintInfo();
+            Console.WriteLine("///////////////////////////////////////////////////////////////////");
         }
     }
 }

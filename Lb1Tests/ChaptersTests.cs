@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lb1;
+using Lab1Sem2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,101 +8,188 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Lb1.Book;
+using static Lab1Sem2.Book;
 using System.Reflection.Metadata;
 
-namespace Lb1.Tests
+
+namespace Lab1Sem2Tests
 {
     [TestClass()]
-    public class ChaptersTests
+    public class BookTests
     {
-
         [TestMethod()]
-        public void setName_Test()
+        public void PrintInfo_PrintsInfoCorrectly()
         {
-            Chapters chapter = new Chapters();
-            string emptyName = "";
+            // Arrange
+            Book book = new Book();
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                Console.SetOut(stringWriter);
 
-            Assert.ThrowsException<ArgumentNullException>(() => chapter.setName(emptyName));
+                book.author = "Author Name";
+                book.name = "Book Title";
+                book.content = new List<Chapters>
+            {
+                new Chapters { Name = "Chapter 1", Pages = 10 },
+                new Chapters { Name = "Chapter 2", Pages = 15 }
+            };
+
+                book.PrintInfo();
+
+                string consoleOutput = stringWriter.ToString();
+                Assert.IsTrue(consoleOutput.Contains("Автор: Author Name"));
+                Assert.IsTrue(consoleOutput.Contains("Название: Book Title"));
+                Assert.IsTrue(consoleOutput.Contains("Количество глав: 2"));
+                Assert.IsTrue(consoleOutput.Contains("Chapter 1: 10 страниц"));
+                Assert.IsTrue(consoleOutput.Contains("Chapter 2: 15 страниц"));
+            }
         }
 
         [TestMethod()]
-        public void setPages_Test()
-        {
-            Chapters chapter = new Chapters();
-            int negativePages = -5;
-
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => chapter.setPages(negativePages));
-        }
-
-
-
-        [TestMethod()]
-        public void setPubHouse_Test()
+        public void EnterPublishing_ValidInput()
         {
             Book book = new Book();
-            string emptyName = "";
+            using (StringReader stringReader = new StringReader("Publishing Name\n2023\n9785123456789\n"))
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                Console.SetIn(stringReader);
+                Console.SetOut(stringWriter);
 
-            Assert.ThrowsException<ArgumentNullException>(() => book.setPubHouse(emptyName));
+                book.EnterPublishing();
+
+                Assert.AreEqual("Publishing Name", book.publishing);
+                string consoleOutput = stringWriter.ToString();
+                Assert.IsTrue(consoleOutput.Contains("Введите издательство:"));
+                Assert.IsTrue(consoleOutput.Contains("Введите год издания:"));
+                Assert.IsTrue(consoleOutput.Contains("Введите ISBN (в формате 9785XXXXXXXXX"));
+            }
         }
 
         [TestMethod()]
-        public void setYear_Test()
+        public void del_Test()
         {
             Book book = new Book();
-            int falseYear = 1000;
+            book.content = new List<Chapters>
+        {
+            new Chapters { Name = "Chapter 1", Pages = 10 },
+            new Chapters { Name = "Chapter 2", Pages = 15 },
+            new Chapters { Name = "Chapter 3", Pages = 20 }
+        };
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => book.setYear(falseYear));
+            int indexToDelete = 1;
+
+            book.del(indexToDelete);
+
+            Assert.AreEqual(2, book.content.Count);
+            Assert.AreEqual("Chapter 1", book.content[0].Name);
+            Assert.AreEqual("Chapter 3", book.content[1].Name);
         }
 
         [TestMethod()]
-        public void SetISBT_Test()
+        public void edit_Test()
         {
             Book book = new Book();
-            string falseISBT = "1231238";
+            book.content = new List<Chapters>
+        {
+            new Chapters { Name = "Chapter 1", Pages = 10 },
+            new Chapters { Name = "Chapter 2", Pages = 15 },
+            new Chapters { Name = "Chapter 3", Pages = 20 }
+        };
 
-            Assert.ThrowsException<ArgumentException>(() => book.setISBT(falseISBT));
+            int indexToEdit = 1;
+            string newName = "Modified Chapter";
+            int newPages = 25;
+
+            book.edit(indexToEdit, newName, newPages);
+
+            Chapters editedChapter = book.content[indexToEdit];
+            Assert.AreEqual(newName, editedChapter.Name); 
+            Assert.AreEqual(newPages, editedChapter.Pages);
         }
 
         [TestMethod()]
-        public void SetAuthor_Test()
+        public void newElement_Test()
         {
             Book book = new Book();
-            string falseAuthor1 = "";
-            string falseAuthor2 = "";
+            book.content = new List<Chapters>
+        {
+            new Chapters { Name = "Chapter 1", Pages = 10 }
+        };
 
-            Assert.ThrowsException<ArgumentException>(() => book.setISBT(falseAuthor1));
-            Assert.ThrowsException<ArgumentException>(() => book.setISBT(falseAuthor2));
+            string newName = "New Chapter";
+            int newPages = 15;
+
+            book.newElement(newName, newPages);
+
+            Assert.AreEqual(2, book.content.Count);
+            Chapters newChapter = book.content[1];
+            Assert.AreEqual(newName, newChapter.Name);
+            Assert.AreEqual(newPages, newChapter.Pages);
         }
 
         [TestMethod()]
-        public void setBookName_Test()
+        public void printVec_Test()
         {
             Book book = new Book();
-            string falseName = "";
+            book.content = new List<Chapters>
+        {
+            new Chapters { Name = "Chapter 1", Pages = 10 },
+            new Chapters { Name = "Chapter 2", Pages = 15 },
+            new Chapters { Name = "Chapter 3", Pages = 20 }
+        };
 
-            Assert.ThrowsException<Exception>(() => book.setName(falseName));
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                Console.SetOut(stringWriter);
+
+                book.printVec();
+
+                string consoleOutput = stringWriter.ToString();
+
+                Assert.IsTrue(consoleOutput.Contains("Chapter 1: 10 страниц;"));
+                Assert.IsTrue(consoleOutput.Contains("Chapter 2: 15 страниц;"));
+                Assert.IsTrue(consoleOutput.Contains("Chapter 3: 20 страниц;"));
+            }
         }
-        
 
         [TestMethod()]
-        public void setType_Test()
+        public void getPAgesTotal_Test()
         {
             Book book = new Book();
-            BookType newType = new BookType();
+            book.content = new List<Chapters>
+            {
+            new Chapters { Pages = 10 },
+            new Chapters { Pages = 5 },
+            new Chapters { Pages = 15 },
+            };
 
-            newType = BookType.HARD_COVER;
+            int result = book.getPAgesTotal();
+            Assert.AreEqual(30, result);
+        }
 
-            book.setType(newType);
+        [TestMethod()]
+        public void setContent_Test()
+        {
+            Book book = new Book();
+            using (StringReader stringReader = new StringReader("2\nChapter1\n10\nChapter2\n15\n"))
+            {
+                Console.SetIn(stringReader);
 
-            Assert.AreEqual(newType, book.getType());
+                book.setContent();
+
+                Assert.AreEqual(2, book.content.Count);
+                Assert.AreEqual("Chapter1", book.content[0].Name);
+                Assert.AreEqual(10, book.content[0].Pages);
+                Assert.AreEqual("Chapter2", book.content[1].Name);
+                Assert.AreEqual(15, book.content[1].Pages);
+            }
         }
 
         [TestMethod()]
         public void PerChapter_Test()
         {
             Book book = new Book();
-            
+
             int total_pages;
             int contentCount = 2;
 
@@ -136,7 +223,7 @@ namespace Lb1.Tests
             Assert.AreEqual(-1, result);
         }
         [TestMethod()]
-        public void ToString_Test() 
+        public void ToString_Test()
         {
             Book book = new Book();
             BookType testType = BookType.SOFT_COVER;
@@ -146,3 +233,4 @@ namespace Lb1.Tests
 
     }
 }
+
